@@ -12,13 +12,12 @@ import java.util.Map;
 import java.util.Queue;
 
 /**
+ * Trie data structure for maintaining a prefix tree
+ * of query suggestions.
  * @author ashimaarora
  *
  */
 public class Trie implements Serializable{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public String prefix;
@@ -44,7 +43,42 @@ public class Trie implements Serializable{
 	}
 	
 	/**
-	 * 
+	 * Says if the trie contains a given prefix
+	 * @param prefix
+	 * @return
+	 */
+	public boolean contains(String prefix) {
+		Trie node = this;
+		for(int i=0; i<prefix.length(); i++) {
+			Character ch = prefix.charAt(i);
+			if(!node.children.containsKey(ch)) {
+				return false;
+			}
+			node = node.children.get(ch);
+		}
+		return true;
+	}
+	
+	/**
+	 * Gets the node in the trie which
+	 * has the given prefix
+	 * @param prefix
+	 * @return node with prefix
+	 */
+	public Trie getChild(String prefix) {
+		Trie node = this;
+		for(int i=0; i<prefix.length(); i++) {
+			Character ch = prefix.charAt(i);
+			if(!node.children.containsKey(ch)) {
+				return null;
+			}
+			node = node.children.get(ch);
+		}
+		return node;
+	}
+	
+	/**
+	 * PP trie
 	 */
 	public void printTrie() {
 		Queue<Trie> q = new LinkedList<Trie>();
@@ -65,5 +99,12 @@ public class Trie implements Serializable{
 			sb.append("\n");
 		}
 		System.out.println(sb.toString());
+	}
+
+	/**
+	 * @param suggestions the suggestions to set
+	 */
+	public void setSuggestions(List<Suggestion> suggestions) {
+		this.suggestions = suggestions;
 	}
 }

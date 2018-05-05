@@ -6,20 +6,20 @@ package aarora.AutoCompleteSystem;
 import java.util.List;
 
 /**
+ * The "master" class which is responsible
+ * for setting up the auto-complete system
+ * and providing query suggestions.
  * @author ashimaarora
  *
  */
 public class QuerySuggestionSystem {
-
-	/**
-	 * 
-	 */
 	public QuerySuggestionSystem() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param args
+	 * Main entry point
+	 * @param args partial query string
 	 */
 	public static void main(String[] args) {
 		if(args.length!=1) {

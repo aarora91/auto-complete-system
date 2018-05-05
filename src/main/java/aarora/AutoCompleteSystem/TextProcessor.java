@@ -18,27 +18,21 @@ import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 
 /**
- * @author ashimaarora
  * Handles all text processing
  * for queries.
+ * @author ashimaarora
  */
 public class TextProcessor {
 	public Tokenizer tokenizer;
 	public POSTaggerME posTagger;
 	public DictionaryLemmatizer lemmatizer;
 
-	/**
-	 * 
-	 */
 	public TextProcessor() {
 		createTokenizer();
 		createPOSTagger();
 		createLemmatizer();
 	}
 
-	/**
-	 * 
-	 */
 	private void createPOSTagger() {
 		InputStream modelIn;
 		try {
@@ -51,9 +45,6 @@ public class TextProcessor {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void createTokenizer() {
 		InputStream modelIn;
 		try {
@@ -66,9 +57,6 @@ public class TextProcessor {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void createLemmatizer() {
 		InputStream is;
 		try {
@@ -82,16 +70,27 @@ public class TextProcessor {
 	}
 
 	/**
+	 * Normalized a sentence or phrase
+	 * to it's lemma form
 	 * @param sentence
-	 * @return
+	 * @return array of string tokens(lemmatized)
 	 */
-	private String[] normalize(String sentence) {
+	public String[] normalize(String sentence) {
 		String[] tokens = tokenizer.tokenize(sentence);
 		String[] tags = posTagger.tag(tokens);
-		return lemmatizer.lemmatize(tokens, tags);
+		String[] lemmas = lemmatizer.lemmatize(tokens, tags);
+		for(int i=0; i<lemmas.length; i++) {
+			String lemma = lemmas[i];
+			if(lemma.equals("O")) {	//If tokens[i] is already in it's lemma form
+				lemmas[i] = tokens[i];
+			}
+		}
+		return lemmas;
 	}
 
 	/**
+	 * Says if two query terms are "similar"
+	 * Similarity in the basic form: do they have more than 1 common term?
 	 * @param query1
 	 * @param query2
 	 * @return

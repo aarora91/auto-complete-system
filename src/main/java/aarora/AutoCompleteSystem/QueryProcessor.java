@@ -19,6 +19,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
+ * Query handler class that is responsible for:
+ * 1. Constructing a trie from the log dump on init.
+ * 2. Suggesting top k queries for a given partial query.
+ * 
  * @author ashimaarora
  *
  */
@@ -28,12 +32,14 @@ public class QueryProcessor {
 	private int k;
 	private TextProcessor textProcessor;
 	/**
-	 * 
+	 * Constructor for a given number of desired results
+	 * (used for caching those many suggestions at a node)
+	 * @param maxTopResults maximum number of suggestions
 	 */
 	public QueryProcessor(int maxTopResults) {
 		String trieDumpFile = AutoCompleteConstants.trieDumpFile;
 		File f = new File(trieDumpFile);
-		if(f.exists() && !f.isDirectory()) { 
+		if(f.exists() && !f.isDirectory()) {
 			trie = (Trie) UtilityFunctions.loadFromFile(trieDumpFile); //Load the trie from previously cached file.
 			LOGGER.info("Loaded trie from dump.");
 		} else {
@@ -54,7 +60,17 @@ public class QueryProcessor {
 	}
 	
 	/**
-	 * @param prefix
+	 * Overloaded constructor for a known set of params
+	 */
+	public QueryProcessor(Trie trie, int k, TextProcessor tp) {
+		this.trie = trie;
+		this.k = k;
+		this.textProcessor = tp;
+	}
+	
+	/**
+	 * Suggests k search queries for a given prefix
+	 * @param prefix List of Suggestions
 	 */
 	public List<Suggestion> suggest(String prefix) {
 		Trie root = trie;
@@ -71,7 +87,9 @@ public class QueryProcessor {
 	}
 	
 	/**
-	 * 
+	 * Caches the top k queries for a given prefix
+	 * in the trie. Primarily used for performance
+	 * enhancement, also when k is fixed.
 	 */
 	public void cacheTopKQueries() {
 		Queue<Trie> q = new LinkedList<Trie>();
@@ -91,7 +109,8 @@ public class QueryProcessor {
 	}
 	
 	/**
-	 * @param pathToLogFile
+	 * Constructs the trie by reading logs
+	 * @param pathToLogFile path to the log file
 	 */
 	public void trainWithLogFile(String pathToLogFile) {
 		//Load the logs from resources/logs.txt
@@ -118,7 +137,8 @@ public class QueryProcessor {
 	}
 	
 	/**
-	 * @param logEntry
+	 * adds a single log entry query string to the Trie.
+	 * @param logEntry LogEntry object
 	 */
 	public void addLogEntryToTrie(LogEntry logEntry){
 		String queryStr = logEntry.getQueryString();
@@ -140,8 +160,15 @@ public class QueryProcessor {
 	}
 	
 	/**
-	 * @param node
-	 * @return
+	 * Gets the top k suggestions for a given node in the
+	 * prefix trie.
+	 * Criteria for selection:
+	 * 1. Frequency of query occurence in logs
+	 * 2. Uniqueness of suggestion to previously given suggestions
+	 * (based on unique words)
+	 * 
+	 * @param node Node in the prefix trie
+	 * @return a list of top k suggestions
 	 */
 	public List<Suggestion> getTopKSuggestions(Trie node) {
 		PriorityQueue<Suggestion> q = new PriorityQueue<Suggestion>();
@@ -167,9 +194,11 @@ public class QueryProcessor {
 	}
 	
 	/**
-	 * @param query
-	 * @param added
-	 * @return
+	 * Decides if a given query is unique compared
+	 * to the set of queries already suggested.
+	 * @param query given query string to be evaluated
+	 * @param added set of queries in line to be suggested
+	 * @return whether the query is unique or not
 	 */
 	public boolean isUniqueQuery(String query, Set<String> added) {
 		Iterator<String> iter = added.iterator();
@@ -179,5 +208,12 @@ public class QueryProcessor {
 				return false;
 		}
 		return true;
+	}
+
+	/**
+	 * @return the trie
+	 */
+	public Trie getTrie() {
+		return trie;
 	}
 }

@@ -11,19 +11,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
+ * Utility functions
  * @author ashimaarora
  *
  */
 public class UtilityFunctions {
-
-	/**
-	 * 
-	 */
 	public UtilityFunctions() {
 		// TODO Auto-generated constructor stub
 	}
 	
 	/**
+	 * Loads an object from a file
 	 * @param filePath
 	 */
 	public static Object loadFromFile(String filePath) {
@@ -35,7 +33,10 @@ public class UtilityFunctions {
 			oi.close();
 			fi.close();
 			return o;
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -43,6 +44,7 @@ public class UtilityFunctions {
 	}
 	
 	/**
+	 * Writes an object to a file location
 	 * @param filePath
 	 * @param o
 	 */

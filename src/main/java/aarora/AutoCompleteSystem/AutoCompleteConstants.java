@@ -4,6 +4,7 @@
 package aarora.AutoCompleteSystem;
 
 /**
+ * Container for all contants used in the project.
  * @author ashimaarora
  *
  */

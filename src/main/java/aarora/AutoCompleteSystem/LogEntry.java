@@ -3,6 +3,8 @@
  */
 package aarora.AutoCompleteSystem;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author ashimaarora
  * Container to hold information pertaining
@@ -22,6 +24,9 @@ public class LogEntry {
 	public LogEntry(String logEntryStr) {
 		fullLogEntryString = logEntryStr;
 		String[]fields = logEntryStr.trim().split("\\|");
+		
+		assertTrue("Invalid log format", fields.length==3);
+		
 		queryString = fields[0];
 		origin = fields[1];
 		timeStamp = fields[2];
